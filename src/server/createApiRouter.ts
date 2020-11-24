@@ -1,5 +1,6 @@
 import { json, Router, urlencoded } from 'express'
 import { Logger } from 'winston'
+import { sampleRouter } from './routers/sampleRouter'
 
 export const createApiRouter = (log: Logger): Router => {
   const router = Router()
@@ -9,6 +10,7 @@ export const createApiRouter = (log: Logger): Router => {
   router.use(urlencoded({ extended: true }))
 
   router.get('/healthcheck', (_, res) => res.send({ status: 'healthy' }))
+  router.use(sampleRouter(log))
 
   return router
 }
