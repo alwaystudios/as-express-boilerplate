@@ -1,0 +1,28 @@
+{
+  "compilerOptions": {
+    "target": "es6",
+    "module": "commonjs",
+    "lib": ["es2015", "es2016", "es2017", "es2018", "dom", "es6", "dom.iterable", "scripthost"],
+    "declaration": true,
+    "sourceMap": true,
+    "outDir": "./dist/",
+    "removeComments": true,
+    "downlevelIteration": true,
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": false,
+    "noImplicitReturns": true,
+    "noImplicitUseStrict": false,
+    "moduleResolution": "node",
+    "esModuleInterop": true,
+    "preserveConstEnums": true,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "typeRoots": ["./types/", "./node_modules/@types"]
+  },
+  "include": ["./src/**/*.ts", "./test/**/*.ts"],
+  "awesomeTypescriptLoaderOptions": {
+    "useBabel": false,
+    "useCache": true
+  }
+}

@@ -1,0 +1,5 @@
+{
+  "env": "prod",
+  "port": 8080,
+  "logLevel": "info"
+}
