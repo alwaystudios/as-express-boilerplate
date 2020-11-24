@@ -9,8 +9,8 @@
     "node": ">=14"
   },
   "scripts": {
-    "start": "yarn s3mock & NODE_ENV=prod node dist/src/index.js",
-    "dev": "yarn s3mock & WATCH_MODE=true NODE_ENV=dev nodemon --exec 'ts-node --files --project tsconfig.json' src/index.ts",
+    "start": "NODE_ENV=prod node dist/src/index.js",
+    "dev": "WATCH_MODE=true NODE_ENV=dev nodemon --exec 'ts-node --files --project tsconfig.json' src/index.ts",
     "lint": "yarn eslint . --ext .js,.jsx,.ts,.tsx",
     "build": "tsc --project tsconfig.json",
     "test": "jest --maxWorkers=4 src",
