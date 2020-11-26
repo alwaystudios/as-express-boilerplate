@@ -10,6 +10,8 @@ export const createApiRouter = (log: Logger): Router => {
   router.use(urlencoded({ extended: true }))
 
   router.get('/healthcheck', (_, res) => res.send({ status: 'healthy' }))
+
+  // todo: sample router - deleteme
   router.use(sampleRouter(log))
 
   return router

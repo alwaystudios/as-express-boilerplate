@@ -6,6 +6,7 @@ import { createApiRouter } from './createApiRouter'
 import cors from 'cors'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
+import { featureMiddleware } from './middleware/featuresMiddleware'
 
 interface App {
   app: express.Express
@@ -19,6 +20,9 @@ export const createApp = (config: Config, log: Logger): App => {
   app.use(cookieParser())
   app.use(cors())
   app.use(helmet())
+  app.use(express.json())
+  app.use(express.urlencoded({ extended: true }))
+  app.use(featureMiddleware(log))
 
   app.use('/api', createApiRouter(log))
 
@@ -29,7 +33,9 @@ export const createApp = (config: Config, log: Logger): App => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   app.use((err: Error, req: express.Request, res: express.Response, next: express.NextFunction) => {
     const { originalUrl, method } = req
-    log.error(`Service error, url: ${method} ${originalUrl}`, err)
+    const features = JSON.stringify(res.locals.features)
+
+    log.error(`Service error, url: ${method} ${originalUrl}, features: ${features}`, err)
 
     res.status(500)
     res.send({
