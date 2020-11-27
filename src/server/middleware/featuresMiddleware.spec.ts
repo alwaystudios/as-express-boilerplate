@@ -24,7 +24,7 @@ describe('feature middleware', () => {
       })
     })
 
-    it('gracefully fail if feature cookie value is not valid', async () => {
+    it('fails gracefully if feature cookie value is not valid', async () => {
       const middleware = featureMiddleware(testLog())
       const req = testRequest({ cookies: { features: `this is not json` } })
       const res = testResponse()
@@ -32,6 +32,36 @@ describe('feature middleware', () => {
       await middleware(req, res, next)
 
       expect(res.locals.features).toEqual({})
+    })
+
+    it('persists features as cookie', () => {
+      const middleware = featureMiddleware(testLog())
+      const req = testRequest({ query: { feature: ['one|first', 'two|second'] } })
+      const cookie = jest.fn() as any
+      const res = testResponse({ cookie })
+
+      middleware(req, res, next)
+
+      const features = { one: 'first', two: 'second' }
+
+      expect(cookie).toHaveBeenCalledTimes(1)
+      expect(cookie).toHaveBeenCalledWith('features', JSON.stringify(features))
+    })
+
+    it('loads features from cookie and overriding querystring', () => {
+      const middleware = featureMiddleware(testLog())
+      const req = testRequest({
+        cookies: { one: 'first', two: 'second' },
+        query: { feature: ['one|first', 'two|updated'] },
+      })
+      const res = testResponse()
+
+      middleware(req, res, next)
+
+      expect(res.locals.features).toMatchObject({
+        one: 'first',
+        two: 'updated',
+      })
     })
   })
 })
