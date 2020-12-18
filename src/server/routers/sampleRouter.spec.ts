@@ -3,9 +3,11 @@ import { testApp } from '../../../test/testApp'
 import config from '../../infra/config'
 import { testLog } from '../../../test/testLog'
 import * as someFunctionModule from './sampleFunction'
+import * as localStorage from '../localStorage'
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const categories = require('../../data/categories.json')
 
+jest.spyOn(localStorage, 'getLog').mockReturnValue(testLog())
 const someFuncMock = jest.spyOn(someFunctionModule, 'someFunction')
 
 describe('sample router', () => {

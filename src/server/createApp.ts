@@ -7,6 +7,7 @@ import cors from 'cors'
 import helmet from 'helmet'
 import cookieParser from 'cookie-parser'
 import { featureMiddleware } from './middleware/featuresMiddleware'
+import { createLocalStorage } from './localStorage'
 
 interface App {
   app: express.Express
@@ -17,14 +18,19 @@ export const createApp = (config: Config, log: Logger): App => {
   const app = express()
   log.info(`config: ${config.toString()}`)
 
+  app.use(async (_req, _res, next) => {
+    await createLocalStorage(log)
+    next()
+  })
+
   app.use(cookieParser())
   app.use(cors())
   app.use(helmet())
   app.use(express.json())
   app.use(express.urlencoded({ extended: true }))
-  app.use(featureMiddleware(log))
+  app.use(featureMiddleware())
 
-  app.use('/api', createApiRouter(log))
+  app.use('/api', createApiRouter())
 
   app.all('*', (_, res) => {
     res.sendStatus(404)

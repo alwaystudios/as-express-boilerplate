@@ -2,6 +2,7 @@ import { featureMiddleware } from './featuresMiddleware'
 import { Request } from 'express'
 import { ApiResponse } from '../../types'
 import { testLog } from '../../../test/testLog'
+import * as localStorage from '../localStorage'
 
 const testRequest = ({ query = {}, cookies = {} } = {}) => ({ query, cookies } as Request)
 const testResponse = ({ cookie = jest.fn() as any } = {}) => ({ locals: {}, cookie } as ApiResponse)
@@ -12,7 +13,7 @@ describe('feature middleware', () => {
 
   describe('feature toggles', () => {
     it('loads features from feature cookie', async () => {
-      const middleware = featureMiddleware(testLog())
+      const middleware = featureMiddleware()
       const req = testRequest({ cookies: { features: `{ "one": "first", "two": "second" }` } })
       const res = testResponse()
 
@@ -25,7 +26,8 @@ describe('feature middleware', () => {
     })
 
     it('fails gracefully if feature cookie value is not valid', async () => {
-      const middleware = featureMiddleware(testLog())
+      jest.spyOn(localStorage, 'getLog').mockReturnValue(testLog())
+      const middleware = featureMiddleware()
       const req = testRequest({ cookies: { features: `this is not json` } })
       const res = testResponse()
 
@@ -35,7 +37,7 @@ describe('feature middleware', () => {
     })
 
     it('persists features as cookie', () => {
-      const middleware = featureMiddleware(testLog())
+      const middleware = featureMiddleware()
       const req = testRequest({ query: { feature: ['one|first', 'two|second'] } })
       const cookie = jest.fn() as any
       const res = testResponse({ cookie })
@@ -49,7 +51,7 @@ describe('feature middleware', () => {
     })
 
     it('loads features from cookie and overriding querystring', () => {
-      const middleware = featureMiddleware(testLog())
+      const middleware = featureMiddleware()
       const req = testRequest({
         cookies: { one: 'first', two: 'second' },
         query: { feature: ['one|first', 'two|updated'] },

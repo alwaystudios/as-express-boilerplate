@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { unnest } from 'ramda'
-import { Logger } from 'winston'
 import { FeaturesType } from '../../types'
+import { getLog } from '../localStorage'
 
 const SEPARATOR = '|'
 
@@ -14,19 +14,19 @@ const getQueryStringFeatures = (req: Request) =>
     {},
   )
 
-const getCookieFeatures = (log: Logger, req: Request): FeaturesType => {
+const getCookieFeatures = (req: Request): FeaturesType => {
   try {
     const features = req.cookies && req.cookies.features ? JSON.parse(req.cookies.features) : {}
     return features
   } catch (err) {
-    log.warn('Unable to parse feature cookie', err)
+    getLog().warn('Unable to parse feature cookie', err)
     return {}
   }
 }
 
-export const featureMiddleware = (log: Logger) => {
+export const featureMiddleware = () => {
   return async (req: Request, res: Response, next: NextFunction) => {
-    const cookieFeatures = getCookieFeatures(log, req)
+    const cookieFeatures = getCookieFeatures(req)
     const queryFeatures = getQueryStringFeatures(req)
 
     res.cookie('features', JSON.stringify({ ...cookieFeatures, ...queryFeatures }))
