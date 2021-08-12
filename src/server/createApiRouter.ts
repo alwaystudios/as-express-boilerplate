@@ -1,5 +1,6 @@
 import { json, Router, urlencoded } from 'express'
 import { getLog } from './localStorage'
+import { candidateRouter } from './routers/candidateRouter'
 import { sampleRouter } from './routers/sampleRouter'
 
 export const createApiRouter = (): Router => {
@@ -15,6 +16,7 @@ export const createApiRouter = (): Router => {
 
   // todo: sample router - deleteme
   router.use(sampleRouter())
+  router.use(candidateRouter())
 
   return router
 }
